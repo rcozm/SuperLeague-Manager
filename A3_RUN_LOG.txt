@@ -1,0 +1,268 @@
+MariaDB [(none)]> USE db_rcozmolici;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+MariaDB [db_rcozmolici]> SOURCE superleague_schema.sql;
+--------------
+CREATE TABLE season (
+  season_id INT AUTO_INCREMENT PRIMARY KEY,
+  year INT NOT NULL,
+  UNIQUE KEY uq_season_year (year)
+) ENGINE=InnoDB
+--------------
+
+ERROR 1050 (42S01): Table 'season' already exists
+--------------
+CREATE TABLE team (
+  team_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  city VARCHAR(100),
+  UNIQUE KEY uq_team_name (name)
+) ENGINE=InnoDB
+--------------
+
+ERROR 1050 (42S01): Table 'team' already exists
+--------------
+CREATE TABLE venue (
+  venue_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  city VARCHAR(100) NOT NULL,
+  UNIQUE KEY uq_venue_name (name)
+) ENGINE=InnoDB
+--------------
+
+ERROR 1050 (42S01): Table 'venue' already exists
+--------------
+CREATE TABLE person (
+  person_id INT AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(120) NOT NULL
+) ENGINE=InnoDB
+--------------
+
+ERROR 1050 (42S01): Table 'person' already exists
+--------------
+CREATE TABLE official (
+  person_id INT PRIMARY KEY,
+  role VARCHAR(50) DEFAULT 'official',
+  CONSTRAINT fk_official_person FOREIGN KEY (person_id)
+    REFERENCES person(person_id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB
+--------------
+
+ERROR 1050 (42S01): Table 'official' already exists
+--------------
+CREATE TABLE referee (
+  person_id INT PRIMARY KEY,
+  CONSTRAINT fk_referee_official FOREIGN KEY (person_id)
+    REFERENCES official(person_id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB
+--------------
+
+ERROR 1050 (42S01): Table 'referee' already exists
+--------------
+CREATE TABLE linesman (
+  person_id INT PRIMARY KEY,
+  CONSTRAINT fk_linesman_official FOREIGN KEY (person_id)
+    REFERENCES official(person_id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB
+--------------
+
+ERROR 1050 (42S01): Table 'linesman' already exists
+--------------
+CREATE TABLE player (
+  person_id INT PRIMARY KEY,
+  team_id INT,
+  position VARCHAR(50),
+  shirt_number INT,
+  CONSTRAINT fk_player_person FOREIGN KEY (person_id)
+    REFERENCES person(person_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_player_team FOREIGN KEY (team_id)
+    REFERENCES team(team_id) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT uq_player_number UNIQUE (team_id, shirt_number)
+) ENGINE=InnoDB
+--------------
+
+ERROR 1050 (42S01): Table 'player' already exists
+--------------
+CREATE TABLE team_season (
+  ts_id INT AUTO_INCREMENT PRIMARY KEY,
+  season_id INT NOT NULL,
+  team_id INT NOT NULL,
+  points INT NOT NULL DEFAULT 0,
+  wins INT NOT NULL DEFAULT 0,
+  draws INT NOT NULL DEFAULT 0,
+  losses INT NOT NULL DEFAULT 0,
+  goals_for INT NOT NULL DEFAULT 0,
+  goals_against INT NOT NULL DEFAULT 0,
+  CONSTRAINT fk_ts_season FOREIGN KEY (season_id)
+    REFERENCES season(season_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_ts_team FOREIGN KEY (team_id)
+    REFERENCES team(team_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT uq_ts UNIQUE (season_id, team_id)
+) ENGINE=InnoDB
+--------------
+
+ERROR 1050 (42S01): Table 'team_season' already exists
+--------------
+CREATE TABLE `match` (
+  match_id INT AUTO_INCREMENT PRIMARY KEY,
+  season_id INT NOT NULL,
+  round_no INT,
+  date_time DATETIME,
+  home_team_id INT NOT NULL,
+  away_team_id INT NOT NULL,
+  venue_id INT,
+  home_goals INT NULL,
+  away_goals INT NULL,
+  CONSTRAINT chk_nonneg_home CHECK (home_goals IS NULL OR home_goals >= 0),
+  CONSTRAINT chk_nonneg_away CHECK (away_goals IS NULL OR away_goals >= 0),
+  CONSTRAINT fk_match_season FOREIGN KEY (season_id)
+    REFERENCES season(season_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_match_home FOREIGN KEY (home_team_id)
+    REFERENCES team(team_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT fk_match_away FOREIGN KEY (away_team_id)
+    REFERENCES team(team_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT fk_match_venue FOREIGN KEY (venue_id)
+    REFERENCES venue(venue_id) ON DELETE SET NULL ON UPDATE CASCADE,
+  INDEX idx_match_home (home_team_id),
+  INDEX idx_match_away (away_team_id),
+  INDEX idx_match_season_round (season_id, round_no)
+) ENGINE=InnoDB
+--------------
+
+ERROR 1050 (42S01): Table 'match' already exists
+MariaDB [db_rcozmolici]> SOURCE superleague_data.sql;
+--------------
+INSERT INTO season (year) VALUES (2025)
+--------------
+
+ERROR 1062 (23000): Duplicate entry '2025' for key 'uq_season_year'
+--------------
+INSERT INTO team (name, city) VALUES
+ ('Univ. Craiova','Craiova'),
+ ('FC Botosani','Botosani'),
+ ('Rapid Bucuresti','Bucuresti'),
+ ('Farul Constanta','Constanta')
+--------------
+
+ERROR 1062 (23000): Duplicate entry 'Univ. Craiova' for key 'uq_team_name'
+--------------
+INSERT INTO venue (name, city) VALUES
+ ('Ion Oblemenco','Craiova'),
+ ('Municipal Botosani','Botosani'),
+ ('Giulesti','Bucuresti'),
+ ('Farul Stadium','Constanta')
+--------------
+
+ERROR 1062 (23000): Duplicate entry 'Ion Oblemenco' for key 'uq_venue_name'
+Query OK, 10 rows affected (0.002 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+--------------
+INSERT INTO player (person_id, team_id, position, shirt_number) VALUES
+ (1, 1, 'FW', 9),
+ (2, 1, 'MF', 8),
+ (3, 2, 'FW', 10),
+ (4, 2, 'DF', 4),
+ (5, 3, 'FW', 11),
+ (6, 3, 'MF', 6),
+ (7, 4, 'FW', 7),
+ (8, 4, 'GK', 1)
+--------------
+
+ERROR 1062 (23000): Duplicate entry '1' for key 'PRIMARY'
+--------------
+INSERT INTO official (person_id, role) VALUES (9, 'referee'), (10, 'linesman')
+--------------
+
+ERROR 1062 (23000): Duplicate entry '9' for key 'PRIMARY'
+--------------
+INSERT INTO referee (person_id) VALUES (9)
+--------------
+
+ERROR 1062 (23000): Duplicate entry '9' for key 'PRIMARY'
+--------------
+INSERT INTO linesman (person_id) VALUES (10)
+--------------
+
+ERROR 1062 (23000): Duplicate entry '10' for key 'PRIMARY'
+--------------
+INSERT INTO team_season (season_id, team_id) SELECT 1, team_id FROM team
+--------------
+
+ERROR 1062 (23000): Duplicate entry '1-4' for key 'uq_ts'
+Query OK, 2 rows affected (0.001 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+Query OK, 2 rows affected (0.022 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+Query OK, 2 rows affected (0.001 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+MariaDB [db_rcozmolici]> SOURCE superleague_queries.sql;
+Query OK, 0 rows affected (0.000 sec)
+
+Query OK, 0 rows affected (0.000 sec)
+
+Query OK, 0 rows affected (0.000 sec)
+
++---------+-----------------+------+-------+--------+-----------+---------------+--------+
+| team_id | name            | wins | draws | losses | goals_for | goals_against | points |
++---------+-----------------+------+-------+--------+-----------+---------------+--------+
+|       1 | Univ. Craiova   |    6 |     0 |      0 |        14 |             2 |     18 |
+|       3 | Rapid Bucuresti |    0 |     4 |      2 |         6 |            10 |      4 |
+|       2 | FC Botosani     |    0 |     2 |      2 |         6 |             8 |      2 |
+|       4 | Farul Constanta |    0 |     2 |      2 |         2 |             8 |      2 |
++---------+-----------------+------+-------+--------+-----------+---------------+--------+
+4 rows in set (0.001 sec)
+
++----------+------------------+-----------------+---------------+-------+
+| round_no | kickoff          | home            | away          | score |
++----------+------------------+-----------------+---------------+-------+
+|        1 | 2025-09-01 18:00 | Univ. Craiova   | FC Botosani   | 2 - 1 |
+|        1 | 2025-09-01 18:00 | Univ. Craiova   | FC Botosani   | 2 - 1 |
+|        2 | 2025-09-09 19:00 | Farul Constanta | Univ. Craiova | 0 - 3 |
+|        2 | 2025-09-09 19:00 | Farul Constanta | Univ. Craiova | 0 - 3 |
+|        3 | 2025-09-18 18:00 | Rapid Bucuresti | Univ. Craiova | 0 - 2 |
+|        3 | 2025-09-18 18:00 | Rapid Bucuresti | Univ. Craiova | 0 - 2 |
++----------+------------------+-----------------+---------------+-------+
+6 rows in set (0.000 sec)
+
+Empty set (0.000 sec)
+
++------------+--------+-----------------+---------------+------------+------------+
+| day        | result | home            | away          | home_goals | away_goals |
++------------+--------+-----------------+---------------+------------+------------+
+| 2025-09-18 | W      | Rapid Bucuresti | Univ. Craiova |          0 |          2 |
+| 2025-09-18 | W      | Rapid Bucuresti | Univ. Craiova |          0 |          2 |
+| 2025-09-09 | W      | Farul Constanta | Univ. Craiova |          0 |          3 |
+| 2025-09-09 | W      | Farul Constanta | Univ. Craiova |          0 |          3 |
+| 2025-09-01 | W      | Univ. Craiova   | FC Botosani   |          2 |          1 |
++------------+--------+-----------------+---------------+------------+------------+
+5 rows in set (0.000 sec)
+
++-----------------+------------+------------+
+| name            | goals_home | goals_away |
++-----------------+------------+------------+
+| Farul Constanta |          0 |          2 |
+| FC Botosani     |          4 |          2 |
+| Rapid Bucuresti |          2 |          4 |
+| Univ. Craiova   |          4 |         10 |
++-----------------+------------+------------+
+4 rows in set (0.000 sec)
+
+Query OK, 0 rows affected (0.000 sec)
+
++----------+------------------+-----------------+-----------------+---------------+------------+------------+
+| round_no | kickoff          | home            | away            | venue         | home_goals | away_goals |
++----------+------------------+-----------------+-----------------+---------------+------------+------------+
+|        1 | 2025-09-01 18:00 | Univ. Craiova   | FC Botosani     | Ion Oblemenco |          2 |          1 |
+|        1 | 2025-09-01 18:00 | Univ. Craiova   | FC Botosani     | Ion Oblemenco |          2 |          1 |
+|        1 | 2025-09-02 20:00 | Rapid Bucuresti | Farul Constanta | Giulesti      |          1 |          1 |
+|        1 | 2025-09-02 20:00 | Rapid Bucuresti | Farul Constanta | Giulesti      |          1 |          1 |
++----------+------------------+-----------------+-----------------+---------------+------------+------------+
+4 rows in set (0.000 sec)
+
+MariaDB [db_rcozmolici]> notee;
