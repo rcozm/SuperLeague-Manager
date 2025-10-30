@@ -5,7 +5,7 @@
 ---
 
 ## Overview  
-The *SuperLeague Manager* is a PHP–MariaDB web application 
+The *SuperLeague Manager* is a PHP–MariaDB web application.
 It allows users to search and explore data about football teams, players, matches, and venues.
 
 ---
