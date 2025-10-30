@@ -22,7 +22,7 @@ It allows users to search and explore data about football teams, players, matche
 - `superleague_queries.sql` – Six SQL queries (standings, fixtures, results, etc.)
 - `A3_RUN_LOG.txt` – Query execution log captured from CLABSQL
 - `ass5/` – maintenance web app with forms (Assignment 5)
-- `ass6/` – web application (Assignment 6)
+- `ass6/` – web application search functionality (Assignment 6)
   
 ---
 
