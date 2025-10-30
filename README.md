@@ -67,9 +67,9 @@ It allows users to search and explore data about football teams, players, matche
 - **Farul Constanta**
 
 ### Players
-- **Cristian Sapunaru** (DF #22 – Rapid București)  
+- **Cristian Sapunaru** (DF #22 – Rapid Bucuresti)  
 - **Alexandru Mitrita** (FW #28 – Univ. Craiova)  
-- **Enriko Papa** (MF #8 – FC Botoșani)  
+- **Enriko Papa** (MF #8 – FC Botosani)  
 
 These entries can be used to test the search and player detail functionalities.
 
