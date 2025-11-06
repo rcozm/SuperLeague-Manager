@@ -17,6 +17,11 @@ It allows users to search and explore data about football teams, players, matche
 ---
 
 ## Files
+- Includes the following secure pages:
+  - `maintenance.php` – main maintenance menu (replaces `maintenance.html`)
+  - `login.php`, `logout.php`, `auth.php` – authentication & session handling
+  - `create_admin.php` – initial admin creation script
+  - `add_*` and `link_*` files – data entry forms protected with login verification
 - `superleague_schema.sql` – Table definitions for the SuperLeague database
 - `superleague_data.sql` – Sample data for testing (4 teams, 1 season, 6 matches)
 - `superleague_queries.sql` – Six SQL queries (standings, fixtures, results, etc.)
