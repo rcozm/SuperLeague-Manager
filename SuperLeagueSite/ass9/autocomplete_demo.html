@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Autocomplete Demo – SuperLeague</title>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+</head>
+<body>
+  <h1>Autocomplete Demo</h1>
+
+  <p><strong>Team:</strong></p>
+  <input id="team" size="40" placeholder="Start typing a team name...">
+
+  <p><strong>Player:</strong></p>
+  <input id="player" size="40" placeholder="Start typing a player name...">
+
+  <script>
+    $(function() {
+      $("#team").autocomplete({
+        source: "search_team_auto.php",
+        minLength: 1
+      });
+      $("#player").autocomplete({
+        source: "search_player_auto.php",
+        minLength: 1
+      });
+    });
+  </script>
+
+  <p><a href="../index.html">Back to site</a></p>
+</body>
+</html>
