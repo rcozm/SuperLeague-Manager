@@ -29,6 +29,7 @@ It allows users to search and explore data about football teams, players, matche
 - `ass5/` – maintenance web app with forms (Assignment 5)
 - `ass6/` – web application search functionality (Assignment 6)
 - `ass9/` – autocomplete feature for both team and player searches using jQuery UI
+- `ass10/` – display the user's IP location on an OpenStreetMap layer
 - `weblog_eval.php` - parses Apache logs to show page hits, recent accesses, and errors, generating a visual report of user activity
   
 ---
